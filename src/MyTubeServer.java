@@ -2,7 +2,7 @@
 import java.rmi.*;
 import java.rmi.registry.*;
 import java.io.*;
-//done
+
 public class MyTubeServer {
 
     public static void main(String args[]) {
@@ -11,7 +11,7 @@ public class MyTubeServer {
         try {
             MyTubeImpl exportedObj = new MyTubeImpl();
             startRegistry(1234);
-            String registryURL = "rmi://localhost:" + 1234 + "/mytube";
+            String registryURL = "rmi://192.168.1.33:" + 1234 + "/mytube";
             Naming.rebind(registryURL, exportedObj);
             System.out.println("MyTube Server ready.");
         } catch (Exception ex) {

@@ -1,7 +1,6 @@
 
 import java.rmi.*;
 import java.io.*;
-import java.util.List;
 import java.util.Scanner;
 
 public class MyTubeClient {
@@ -11,7 +10,7 @@ public class MyTubeClient {
         File directory = new File("ClientMem");
         directory.mkdir();
         try {
-            String registryURL = "rmi://localhost:" + 1234 + "/mytube";
+            String registryURL = "rmi://192.168.1.33:" + 1234 + "/mytube";
             MyTubeInterface i = (MyTubeInterface) Naming.lookup(registryURL);
             CallbackInterface callbackObj = new CallbackImpl();
             i.addCallback(callbackObj);
