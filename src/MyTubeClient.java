@@ -12,7 +12,7 @@ public class MyTubeClient {
         String IP = "192.168.1.33";
 
         try {
-            String registryURL = "rmi" + IP + ":" + 1234 + "/mytube";
+            String registryURL = "rmi://" + IP + ":" + 1234 + "/mytube";
             MyTubeInterface i = (MyTubeInterface) Naming.lookup(registryURL);
             CallbackInterface callbackObj = new CallbackImpl();
             i.addCallback(callbackObj);
