@@ -8,10 +8,13 @@ public class MyTubeServer {
     public static void main(String args[]) {
         File directory = new File("Database");
         directory.mkdir();
+        String IP = "192.168.1.33";
+        System.setProperty("java.rmi.server.hostname", IP);
+
         try {
             MyTubeImpl exportedObj = new MyTubeImpl();
             startRegistry(1234);
-            String registryURL = "rmi://192.168.1.33:" + 1234 + "/mytube";
+            String registryURL = "rmi://" + IP + ":" + 1234 + "/mytube";
             Naming.rebind(registryURL, exportedObj);
             System.out.println("MyTube Server ready.");
         } catch (Exception ex) {

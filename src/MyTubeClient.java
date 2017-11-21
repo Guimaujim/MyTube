@@ -9,8 +9,10 @@ public class MyTubeClient {
         MyTubeClient client = new MyTubeClient();
         File directory = new File("ClientMem");
         directory.mkdir();
+        String IP = "192.168.1.33";
+
         try {
-            String registryURL = "rmi://192.168.1.33:" + 1234 + "/mytube";
+            String registryURL = "rmi" + IP + ":" + 1234 + "/mytube";
             MyTubeInterface i = (MyTubeInterface) Naming.lookup(registryURL);
             CallbackInterface callbackObj = new CallbackImpl();
             i.addCallback(callbackObj);
