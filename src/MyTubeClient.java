@@ -10,6 +10,8 @@ public class MyTubeClient {
         File directory = new File("ClientMem");
         directory.mkdir();
         String IP = "192.168.1.33";
+        String clientIP = "192.168.1.33";
+        System.setProperty("java.rmi.server.hostname", clientIP);
 
         try {
             String registryURL = "rmi://" + IP + ":" + 1234 + "/mytube";
@@ -27,8 +29,10 @@ public class MyTubeClient {
 
                 if ("d".equals(input)) {
                     clientDownload(i);
+                    System.out.println("Download completed!");
                 } else if ("u".equals(input)) {
                     clientUpload(i);
+                    System.out.println("Upload completed!");
                 } else if ("f".equals(input)) {
                     clientFind(i);
                 } else if ("e".equals(input)) {
