@@ -7,10 +7,12 @@ import java.io.*;
 public class MyTubeImpl extends UnicastRemoteObject implements MyTubeInterface {
 
     private static Vector callbackObjects; //Vector for all the clients we need to do a callback
+    private static Vector MyTubeServers; //Vector for all the servers currently connected
 
     public MyTubeImpl() throws RemoteException {
         super();
         callbackObjects = new Vector();
+        MyTubeServers = new Vector();
     }
 
     //Adds client to callback vector
@@ -20,9 +22,33 @@ public class MyTubeImpl extends UnicastRemoteObject implements MyTubeInterface {
         callbackObjects.addElement(CallbackObject);
     }
 
+    //Adds servers to vector
+    @Override
+    public Vector addServerAll(MyTubeInterface MyTubeServer) {
+        System.out.println("Server got a server request");
+        for (int i = 0; i < MyTubeServers.size(); i++) {
+            MyTubeInterface server
+                    = (MyTubeInterface) MyTubeServers.elementAt(i);
+            addServer(server);
+        }
+        MyTubeServers.addElement(MyTubeServer);
+        return MyTubeServers;
+    }
+
+    //Auxiliary file to add servers
+    public void addServer(MyTubeInterface MyTubeServer) {
+        System.out.println("Server got a server request: " + MyTubeServer);
+        MyTubeServers.addElement(MyTubeServer);
+    }
+
+    //Auxiliary file to update new server
+    public void copyServers(Vector MyTubeServer) {
+        MyTubeServers = MyTubeServer;
+    }
+
     //Removes client from callback vector
     @Override
-    public synchronized void unregisterForCallback(
+    public void unregisterForCallback(
             CallbackInterface callbackClientObject)
             throws java.rmi.RemoteException {
         if (callbackObjects.removeElement(callbackClientObject)) {
@@ -34,7 +60,7 @@ public class MyTubeImpl extends UnicastRemoteObject implements MyTubeInterface {
 
     //Sends file to client
     @Override
-    public byte[] download(String name) throws RemoteException {
+    public byte[] download(String name, boolean repeat) throws RemoteException {
         File folder = new File("Database");
         String path = "Database";
         File[] directory = folder.listFiles();
@@ -55,7 +81,20 @@ public class MyTubeImpl extends UnicastRemoteObject implements MyTubeInterface {
                 return new byte[0];
             }
         } else {
-            return new byte[0];
+            if (repeat == true) {
+                for (int i = 0; i < MyTubeServers.size(); i++) {
+                    MyTubeInterface server
+                            = (MyTubeInterface) MyTubeServers.elementAt(i);
+                    byte buffer[] = server.download(name, false);
+
+                    if (buffer.length != 0) {
+                        return buffer;
+                    }
+                }
+                return new byte[0];
+            } else {
+                return new byte[0];
+            }
         }
     }
 
@@ -103,13 +142,14 @@ public class MyTubeImpl extends UnicastRemoteObject implements MyTubeInterface {
 
     //Auxiliary method for server find so it can be a recursive method
     @Override
-    public String find(String name) {
+    public String find(String name, boolean repeat) {
         File folder = new File("Database");
         String path = "Database";
         File[] directory = folder.listFiles();
         String result = "";
+        ArrayList<String> StringArray = new ArrayList<String>();
 
-        ArrayList<String> StringArray = serverFind(directory, path, name);
+        StringArray = serverFind(directory, path, name);
 
         for (int i = 0; i < StringArray.size(); i++) {
             if (i != StringArray.size() - 1) {
@@ -118,11 +158,25 @@ public class MyTubeImpl extends UnicastRemoteObject implements MyTubeInterface {
                 result += StringArray.get(i);
             }
         }
+        result += " ";
+
+        if (repeat == true) {
+            try {
+                for (int i = 0; i < MyTubeServers.size(); i++) {
+                    MyTubeInterface server
+                            = (MyTubeInterface) MyTubeServers.elementAt(i);
+                    result += server.find(name, false);
+                }
+            } catch (Exception e) {
+                System.out.println("Error! " + e);
+            }
+            return result;
+        }
 
         return result;
     }
 
-    //Searches for files that contain the given name
+//Searches for files that contain the given name
     public ArrayList<String> serverFind(File[] Files, String path, String name) {
         ArrayList<String> StringArray = new ArrayList<String>();
 
@@ -145,7 +199,7 @@ public class MyTubeImpl extends UnicastRemoteObject implements MyTubeInterface {
     }
 
     //It anounces to all clients that a new file has been uploaded
-    private static void callback() {
+    private void callback() {
         for (int i = 0; i < callbackObjects.size(); i++) {
             System.out.println("Now performing the " + i + "th callback\n");
             CallbackInterface client
@@ -153,7 +207,12 @@ public class MyTubeImpl extends UnicastRemoteObject implements MyTubeInterface {
             try {
                 client.callMe("New content has been uploaded!");
             } catch (Exception e) {
-                System.out.println("Error! " + e);
+                System.out.println("Client has disconnected, removing from callback list");
+                try{
+                unregisterForCallback(client);
+                } catch (Exception e2){
+                    System.out.println("Error!");
+                }
             }
         }
     }

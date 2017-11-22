@@ -9,18 +9,24 @@ public class MyTubeClient {
         MyTubeClient client = new MyTubeClient();
         File directory = new File("ClientMem"); //Directory where clients will save their files
         directory.mkdir();
-        String IP = "192.168.1.33";
-        String clientIP = "192.168.1.33";
+        Scanner reader = new Scanner(System.in);
+        String port;
+        String IP;
+        String input;
+
+        System.out.println("Enter the IP of the server:");
+        IP = reader.nextLine();
+        System.out.println("Enter the port of the server:");
+        port = reader.nextLine();
+        System.out.println("Enter the IP of your client:");
+        String clientIP = reader.nextLine();
         System.setProperty("java.rmi.server.hostname", clientIP); //Set so callbacks can work properly
 
         try {
-            String registryURL = "rmi://" + IP + ":" + 1234 + "/mytube";
+            String registryURL = "rmi://" + IP + ":" + port + "/mytube";
             MyTubeInterface i = (MyTubeInterface) Naming.lookup(registryURL);
             CallbackInterface callbackObj = new CallbackImpl();
             i.addCallback(callbackObj); //Client adds to callback list
-
-            String input;
-            Scanner reader = new Scanner(System.in);
 
             while (true) {
                 System.out.println("What do you want to do?");
@@ -56,7 +62,7 @@ public class MyTubeClient {
         System.out.println("Please insert the name of the file you want to download:");
         name = reader.nextLine();
         String path = "ClientMem/" + name;
-        byte[] file = i.download(name); //Client calls server to execute implementation's method to download the file
+        byte[] file = i.download(name, true); //Client calls server to execute implementation's method to download the file
 
         if (file.length == 0) {
             System.out.println("There isn't any file named like that");
@@ -133,7 +139,7 @@ public class MyTubeClient {
 
         System.out.println("Please insert the name of the file you want to find:");
         name = reader.nextLine();
-        String results = i.find(name); //Client calls server to execute implementation's method to find the file
+        String results = i.find(name, true); //Client calls server to execute implementation's method to find the file
 
         System.out.println(results);
     }
