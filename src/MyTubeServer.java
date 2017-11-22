@@ -6,11 +6,12 @@ import java.io.*;
 public class MyTubeServer {
 
     public static void main(String args[]) {
-        File directory = new File("Database");
+        File directory = new File("Database"); //Directory where the server will save its files
         directory.mkdir();
         String IP = "192.168.1.33";
-        System.setProperty("java.rmi.server.hostname", IP);
-        
+        System.setProperty("java.rmi.server.hostname", IP); //Set so the clients can connect properly
+
+        //Same coding as the one done in class
         try {
             MyTubeImpl exportedObj = new MyTubeImpl();
             startRegistry(1234);
@@ -22,6 +23,7 @@ public class MyTubeServer {
         }
     }
 
+    //Same coding as the one done in class
     private static void startRegistry(int RMIPortNum)
             throws RemoteException {
         try {

@@ -3,6 +3,7 @@ import java.rmi.*;
 import java.io.*;
 import java.util.List;
 
+//Interface of the server's implementation
 public interface MyTubeInterface extends Remote {
 
     public byte[] download(String name)

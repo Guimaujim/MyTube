@@ -9,6 +9,7 @@ public class CallbackImpl extends UnicastRemoteObject
         super();
     }
 
+    //It sends a specific message to all clients
     @Override
     public String callMe(String message) throws RemoteException {
         String returnMessage = "Message from the server: " + message;
