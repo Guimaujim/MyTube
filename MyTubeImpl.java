@@ -59,6 +59,7 @@ public class MyTubeImpl extends UnicastRemoteObject implements MyTubeInterface {
     }
 
     //Sends file to client
+    //Boolean added to avoid useless calls
     @Override
     public byte[] download(String name, boolean repeat) throws RemoteException {
         File folder = new File("Database");
@@ -141,6 +142,7 @@ public class MyTubeImpl extends UnicastRemoteObject implements MyTubeInterface {
     }
 
     //Auxiliary method for server find so it can be a recursive method
+    //Boolean added to avoid useless calls
     @Override
     public String find(String name, boolean repeat) {
         File folder = new File("Database");
@@ -176,7 +178,7 @@ public class MyTubeImpl extends UnicastRemoteObject implements MyTubeInterface {
         return result;
     }
 
-//Searches for files that contain the given name
+    //Searches for files that contain the given name
     public ArrayList<String> serverFind(File[] Files, String path, String name) {
         ArrayList<String> StringArray = new ArrayList<String>();
 
@@ -208,9 +210,9 @@ public class MyTubeImpl extends UnicastRemoteObject implements MyTubeInterface {
                 client.callMe("New content has been uploaded!");
             } catch (Exception e) {
                 System.out.println("Client has disconnected, removing from callback list");
-                try{
-                unregisterForCallback(client);
-                } catch (Exception e2){
+                try {
+                    unregisterForCallback(client);
+                } catch (Exception e2) {
                     System.out.println("Error!");
                 }
             }

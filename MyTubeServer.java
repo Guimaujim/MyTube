@@ -49,7 +49,7 @@ public class MyTubeServer {
         }
     }
 
-    //Let's servers join together
+    //Lets servers join together
     public static void joinServer(MyTubeImpl self)
             throws RemoteException, NotBoundException, MalformedURLException {
         String port;
