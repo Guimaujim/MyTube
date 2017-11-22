@@ -40,16 +40,21 @@ public class MyTubeImpl extends UnicastRemoteObject implements MyTubeInterface {
         File[] directory = folder.listFiles();
         File userFile;
         path = search(directory, path, name); //Server searches for the file
-        userFile = new File(path);
-        byte buffer[] = new byte[(int) userFile.length()]; //Server converts file into an array of bytes to be sent
 
-        try {
-            BufferedInputStream input = new BufferedInputStream(new FileInputStream(path));
-            input.read(buffer, 0, buffer.length);
-            input.close();
-            return (buffer); //Server sends the array of bytes
-        } catch (IOException e) {
-            System.out.println("Error!");
+        if (path != null) {
+            userFile = new File(path);
+            byte buffer[] = new byte[(int) userFile.length()]; //Server converts file into an array of bytes to be sent
+
+            try {
+                BufferedInputStream input = new BufferedInputStream(new FileInputStream(path));
+                input.read(buffer, 0, buffer.length);
+                input.close();
+                return (buffer); //Server sends the array of bytes
+            } catch (IOException e) {
+                System.out.println("Error!");
+                return new byte[0];
+            }
+        } else {
             return new byte[0];
         }
     }
